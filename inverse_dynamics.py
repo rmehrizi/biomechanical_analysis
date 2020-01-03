@@ -1,3 +1,6 @@
+# Rahil Mehrizi
+# Jan 2020
+
 import pandas as pd
 
 def mass(body_mass, gender):
