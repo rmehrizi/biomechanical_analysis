@@ -1,3 +1,6 @@
+# Rahil Mehrizi
+# Jan 2020
+
 import pandas as pd
 
 def event_detection(body_mass, constant, fp_data):
