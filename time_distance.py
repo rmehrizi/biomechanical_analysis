@@ -1,10 +1,52 @@
 # Rahil Mehrizi
 # Jan 2020
+# A moduale for calculating gait events and time-distance features
 
 import pandas as pd
 
-def event_detection(body_mass, constant, fp_data):
-    # find the first RHS
+def event_detection(fp_data, body_mass, constant = 0.05):
+    
+     """Returns the times at which heel strikes and toe offs happen based on the forca plate data.
+     Methods
+     ==========
+     A treshhold is being defined as a percentage of total body weight (constant * body_mass * 9.81) and heel strike 
+     happens when the vertical ground reaction force goes above a treshhold after being below the treshhold. Toe off 
+     happens when the vertical ground reaction force goes below a treshhold after being above the treshhold.   
+     Parameters
+     ==========
+        fp_data : dataframe
+            A dataframe with two columns including left and right vertical ground reaction force in N
+        body_mass : float
+            body mass in kg
+        constant : float
+            predifed percentage to detect heel strike and toe off           
+        Returns
+        =======
+        A dataframe with four columns:
+        HSL : All indices at which fp_data['for_l_y'] is greater than constant * body_weight and it was less than 
+              constant * body_weight at the preceding time index.
+        TOL : All indices at which fp_data['for_l_y'] is less than constant * body_weight and it was greater than 
+              constant * body_weight at the preceding time index.
+        HSR : All indices at which fp_data['for_r_y'] is greater than constant * body_weight and it was less than 
+              constant * body_weight at the preceding time index.
+        TOR : All indices at which fp_data['for_r_y'] is less than constant * body_weight and it was greater than 
+              constant * body_weight at the preceding time index.        
+    """
+      
+    # left leg
+    i = 0
+    heel_strike_l = []
+    toe_off_l = []
+    while i < len(fp_data) - 1:
+        if fp_data.loc[i,'for_l_y'] >= constant * body_mass * 9.81:
+            i += 1
+        else:
+            toe_off_l.append(i)
+            while (fp_data.loc[i,'for_l_y'] < constant * body_mass * 9.81) and (i < len(fp_data) - 1):
+                i += 1
+            heel_strike_l.append(i)
+            
+    # right leg
     i = 0
     heel_strike_r = []
     toe_off_r = []
@@ -17,21 +59,9 @@ def event_detection(body_mass, constant, fp_data):
                 i += 1
             heel_strike_r.append(i)
 
-    i = 0
-    heel_strike_l = []
-    toe_off_l = []
-    while i < len(fp_data) - 1:
-        if fp_data.loc[i,'for_l_y'] >= constant * body_mass * 9.81:
-            i += 1
-        else:
-            toe_off_l.append(i)
-            while (fp_data.loc[i,'for_l_y'] < constant * body_mass * 9.81) and (i < len(fp_data) - 1):
-                i += 1
-            heel_strike_l.append(i)
-
-    output = [heel_strike_r, toe_off_r, heel_strike_l, toe_off_l]
+    output = [heel_strike_l, toe_off_l, heel_strike_r, toe_off_r]
     output = [list(i) for i in zip(*output)]
-    return pd.DataFrame(output,columns=['HSR','TOR','HSL','TOL'])
+    return pd.DataFrame(output,columns=['HSL','TOL','HSR','TOR'])
 
 def cadence(events, total_time, delta):
     return (events.HSL.count() + events.HSR.count()) / (total_time * delta / 60)
