@@ -89,23 +89,42 @@ def cadence(events, delta = 0.01):
     finish = events[-1].max()
     total_time = (finish - start) * delta / 60
     
-    return (events.HSL.count() + events.HSR.count()) / total_time
+    return (events.HSL.count() + events.HSR.count() - 1) / total_time
 
 def stance_ratio(events):
+    
+     """Returns the ratio of stance to the gait cycle. In normal gait, it should be around 0.6.
+        
+     Methods
+     ==========
+     stance_ratio = (toe_off(t) - heel_strike(t)) / (heel_strike(t+1) - heel_strike(t))
+     
+     Parameters
+     ==========
+        events : dataframe
+            A dataframe with four columns indicating the indices of left and right heel strikes and left and right toe offs.
+            
+     Returns
+     =======
+     average of stance_ratio on the whole gate cycles for left and right leg seperately.     
+    """
+    
+    # start from the first heel strike (left leg)
     if events.loc[0, 'HSL'] > events.loc[0, 'TOL']:
         events['TOL'] = events['TOL'].shift(periods=-1)
 
     stance_l = events['TOL'] - events['HSL']
-    cycle_l = events['HSL'].diff(periods=-1)
+    cycle_l = - events['HSL'].diff(periods=-1)
     ratio_l = stance_l / cycle_l
 
+    # start from the first heel strike (right leg)
     if events.loc[0,'HSR'] > events.loc[0,'TOR']:
         events['TOR'] = events['TOR'].shift(periods=-1)
 
     stance_r = events['TOR'] - events['HSR']
-    cycle_r = events['HSR'].diff(periods=-1)
+    cycle_r = - events['HSR'].diff(periods=-1)
     ratio_r = stance_r / cycle_r
 
-    return [-ratio_l.mean(), -ratio_r.mean()]
+    return [ratio_l.mean(), ratio_r.mean()]
 
 
