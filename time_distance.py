@@ -7,11 +7,13 @@ import pandas as pd
 def event_detection(fp_data, body_mass, constant = 0.05):
     
      """Returns the times at which heel strikes and toe offs happen based on the forca plate data.
+     
      Methods
      ==========
      A treshhold is being defined as a percentage of total body weight (constant * body_mass * 9.81) and heel strike 
      happens when the vertical ground reaction force goes above a treshhold after being below the treshhold. Toe off 
      happens when the vertical ground reaction force goes below a treshhold after being above the treshhold.   
+     
      Parameters
      ==========
         fp_data : dataframe
@@ -19,7 +21,8 @@ def event_detection(fp_data, body_mass, constant = 0.05):
         body_mass : float
             body mass in kg
         constant : float
-            predifed percentage to detect heel strike and toe off           
+            predifed percentage to detect heel strike and toe off   
+            
         Returns
         =======
         A dataframe with four columns:
@@ -63,8 +66,30 @@ def event_detection(fp_data, body_mass, constant = 0.05):
     output = [list(i) for i in zip(*output)]
     return pd.DataFrame(output,columns=['HSL','TOL','HSR','TOR'])
 
-def cadence(events, total_time, delta):
-    return (events.HSL.count() + events.HSR.count()) / (total_time * delta / 60)
+def cadence(events, delta = 0.01):
+    
+    """Returns number of steps per minute
+    
+     Methods
+     ==========
+     cadence = (# right heel strike + # left heel strike - 1) / (time of the last heel strike - time of the first heel strike)
+     
+     Parameters
+     ==========
+        events : dataframe
+            A dataframe with two columns indicating the indices of left and right heel strikes
+        delta : float
+            force plate data rate (1/s)  
+            
+        Returns
+        =======
+        average of cadence (steps per minute) on the whole gate cycles      
+    """
+    start = events[0].min()
+    finish = events[-1].max()
+    total_time = (finish - start) * delta / 60
+    
+    return (events.HSL.count() + events.HSR.count()) / total_time
 
 def stance_ratio(events):
     if events.loc[0, 'HSL'] > events.loc[0, 'TOL']:
