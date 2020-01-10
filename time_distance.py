@@ -16,15 +16,15 @@ def event_detection(fp_data, body_mass, constant = 0.05):
      
      Parameters
      ==========
-        fp_data : dataframe
-            A dataframe with two columns including left and right vertical ground reaction force in N
-        body_mass : float
-            body mass in kg
-        constant : float
-            predifed percentage to detect heel strike and toe off   
+     fp_data : dataframe
+        A dataframe with two columns including left and right vertical ground reaction force in N
+     body_mass : float
+        body mass in kg
+     constant : float
+        predifed percentage to detect heel strike and toe off   
             
-        Returns
-        =======
+    Returns
+    =======
         A dataframe with four columns:
         HSL : All indices at which fp_data['for_l_y'] is greater than constant * body_weight and it was less than 
               constant * body_weight at the preceding time index.
@@ -76,14 +76,14 @@ def cadence(events, delta = 0.01):
      
      Parameters
      ==========
-        events : dataframe
-            A dataframe with two columns indicating the indices of left and right heel strikes
-        delta : float
-            force plate data rate (1/s)  
+     events : dataframe
+        A dataframe with two columns indicating the indices of left and right heel strikes
+     delta : float
+        force plate data rate (1/s)  
             
-        Returns
-        =======
-        average of cadence (steps per minute) on the whole gate cycles      
+     Returns
+     =======
+     average of cadence (steps per minute) on the whole gate cycles      
     """
     start = events[0].min()
     finish = events[-1].max()
@@ -101,8 +101,8 @@ def stance_ratio(events):
      
      Parameters
      ==========
-        events : dataframe
-            A dataframe with four columns indicating the indices of left and right heel strikes and left and right toe offs.
+     events : dataframe
+        A dataframe with four columns indicating the indices of left and right heel strikes and left and right toe offs.
             
      Returns
      =======
