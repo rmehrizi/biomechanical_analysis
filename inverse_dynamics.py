@@ -1,14 +1,34 @@
 # Rahil Mehrizi
 # Jan 2020
+# A moduale for performing inverse kinetics on marker and force plate data
 
 import pandas as pd
 
 def mass(body_mass, gender):
-    if gender == 'M':
+    
+     """Returns segment mass as fraction of total body mass
+     
+     Methods
+     ==========
+     
+     Parameters
+     ==========
+     body_mass : float
+        total body mass in kg
+     gender: bool
+        0 : male
+        1 : female
+            
+     Returns
+     =======
+        A dictionary with mass of each body segment in kg
+    """
+        
+    if gender == 0:
         c1 = 14.16
         c2 = 4.33
         c3 = 1.37
-    if gender == 'F':
+    if gender == 1:
         c1 = 14.78
         c2 = 4.81
         c3 = 1.29
@@ -23,11 +43,30 @@ def mass(body_mass, gender):
                  'thigh_r': thigh_r_mass, 'shank_r': shank_r_mass, 'foot_r': foot_r_mass})
 
 def center_of_mass(marker_data, gender):
-    if gender == 'M':
+    
+    """Returns segment center of mass coordinates based on the fraction of length 
+     
+     Methods
+     ==========
+     
+     Parameters
+     ==========
+     marker_data : dataframe
+        A dataframe with 27 columns including 3d coordinates of 9 joints
+     gender: bool
+        0 : male
+        1 : female
+            
+     Returns
+     =======
+        A dataframe with 18 columns including 3d coordinates of 6 body segment center of mass
+    """ 
+    
+    if gender == 0:
         c1 = 40.95
         c2 = 44.59
         c3 = 44.15
-    if gender == 'F':
+    if gender == 1:
         c1 = 36.9
         c2 = 27.1
         c3 = 29.9
@@ -67,12 +106,28 @@ def center_of_mass(marker_data, gender):
                                          'foot_r_x', 'foot_r_y', 'foot_r_z'])
 
 def derivative(df, delta, order = 2):
-    '''b, a = butter(4, 0.004)
-    df = df.dropna()
-    plt.plot(df['shank_l_y'])
-    df = df.apply(lambda x: filtfilt(b, a, x))
-    plt.plot(df['shank_l_y'])
-    plt.show()'''
+    
+     """Returns 1st and 2nd derivatives of a dataframe
+     
+     Methods
+     ==========
+     numerical calculating of derivative for each column 
+     df/dx = (f(t) - f(t-1)) / delta_t
+     d2f/dx2 = (f(t) - 2*f(t-1) + f(t-2)) / (delta_t)^2
+     
+     Parameters
+     ==========
+     df: dataframe
+     delta: float
+        delta_t in s
+     order: [1,2]
+        1: first derivative
+        2: second derivative
+            
+     Returns
+     =======
+        A dataframe whoes values are equal to the derivative of the input dataframe
+    """ 
 
     if order == 1:
         deriv = (df - df.diff()) / delta
@@ -82,6 +137,29 @@ def derivative(df, delta, order = 2):
     return deriv
 
 def force(fp, mass, cm_dd):
+    
+     """Returns force at each joint
+     
+     Methods
+     ==========
+     Newton-Euler equations ()
+     
+     Parameters
+     ==========
+     fp: dataframe
+        A dataframe with 6 columns including 3d components of the force applied to the left and right force plates in N
+     mass: float
+        total body mass in kg
+     cm_dd: dataframe
+        second derivative of each segment center of mass (output of derivative function)
+              
+     Returns
+     =======
+        A dataframe with 18 columns:
+        ankle_l_x : x component of force applied on the left ankle
+
+    """ 
+        
     g_x, g_y, g_z = [0, -9.81, 0]
     cm_dd = cm_dd.dropna()
     output = []
