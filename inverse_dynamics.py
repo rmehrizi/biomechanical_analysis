@@ -138,7 +138,7 @@ def derivative(df, delta, order = 2):
 
 def force(fp, mass, cm_dd):
     
-     """Returns force at each joint
+     """Returns force at each joint in N
      
      Methods
      ==========
@@ -155,8 +155,25 @@ def force(fp, mass, cm_dd):
               
      Returns
      =======
-        A dataframe with 18 columns:
+     A dataframe with 18 columns:
         ankle_l_x : x component of force applied on the left ankle
+        ankle_l_y : y component of force applied on the left ankle
+        ankle_l_z : z component of force applied on the left ankle
+        knee_l_x : x component of force applied on the left knee
+        knee_l_y : y component of force applied on the left knee
+        knee_l_z : z component of force applied on the left knee
+        hip_l_x : x component of force applied on the left hip
+        hip_l_y : y component of force applied on the left hip
+        hip_l_z : z component of force applied on the left hip
+        ankle_r_x : x component of force applied on the right ankle
+        ankle_r_y : y component of force applied on the right ankle
+        ankle_r_z : z component of force applied on the right ankle
+        knee_r_x : x component of force applied on the right knee
+        knee_r_y : y component of force applied on the right knee
+        knee_r_z : z component of force applied on the right knee
+        hip_r_x : x component of force applied on the right hip
+        hip_r_y : y component of force applied on the right hip
+        hip_r_z : z component of force applied on the right hip
 
     """ 
         
@@ -197,6 +214,53 @@ def force(fp, mass, cm_dd):
                                          'hip_r_x', 'hip_r_y', 'hip_r_z'])
 
 def moment(fp, marker, mass, cm, cm_dd, force):
+    
+     """Returns moment at each joint in Nm
+     
+     Methods
+     ==========
+     Newton-Euler equations ()
+     
+     Parameters
+     ==========
+     fp: dataframe
+        A dataframe with 18 columns including 3d coordinates of center of pressure and 3d components of the force and moment
+        applied to the left and right force plates in N
+     marker_data : dataframe
+        A dataframe with 27 columns including 3d coordinates of 9 joint    
+     mass: float
+        total body mass in kg
+     cm: dataframe
+        A dataframe with 18 columns including 3d coordinates of 6 body segment center of mass (output of center_of_mass function)
+     cm_dd: dataframe
+        second derivative of each segment center of mass (output of derivative function)
+     force: dataframe
+        A dataframe with 18 columns including 3d components of force at each joint  (output of force function)
+              
+     Returns
+     =======
+     A dataframe with 18 columns:
+        ankle_l_x : x component of moment applied on the left ankle
+        ankle_l_y : y component of moment applied on the left ankle
+        ankle_l_z : z component of moment applied on the left ankle
+        knee_l_x : x component of moment applied on the left knee
+        knee_l_y : y component of moment applied on the left knee
+        knee_l_z : z component of moment applied on the left knee
+        hip_l_x : x component of moment applied on the left hip
+        hip_l_y : y component of moment applied on the left hip
+        hip_l_z : z component of moment applied on the left hip
+        ankle_r_x : x component of moment applied on the right ankle
+        ankle_r_y : y component of moment applied on the right ankle
+        ankle_r_z : z component of moment applied on the right ankle
+        knee_r_x : x component of moment applied on the right knee
+        knee_r_y : y component of moment applied on the right knee
+        knee_r_z : z component of moment applied on the right knee
+        hip_r_x : x component of moment applied on the right hip
+        hip_r_y : y component of moment applied on the right hip
+        hip_r_z : z component of moment applied on the right hip
+
+    """ 
+        
     g_x, g_y, g_z = [0, -9.81, 0]
     cm_dd = cm_dd.dropna()
     output = []
@@ -361,7 +425,7 @@ def moment(fp, marker, mass, cm, cm_dd, force):
 
 
 #to_do (power)
-
+#to_do plot
 
 
 
