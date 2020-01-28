@@ -38,9 +38,9 @@ The force plate data should be in the following order: <br />
 6.	*Moments on the right force plate*
 
 This computation assumes the following coordinate system: <br />
-**x is from right to left leg* <br />
-**y is from bottom to top* <br />
-**z is from back to front* <br />
+**x is from right to left leg** <br />
+**y is from bottom to top** <br />
+**z is from back to front** <br />
 
 ## Testing
 When in the repository directory, run test.py <br />
