@@ -85,8 +85,8 @@ def cadence(events, delta = 0.01):
      =======
      average of cadence (steps per minute) on the whole gate cycles      
     """
-    start = events[0].min()
-    finish = events[-1].max()
+    start = events.iloc[0].min()
+    finish = events.iloc[-1].max()
     total_time = (finish - start) * delta / 60
     
     return (events.HSL.count() + events.HSR.count() - 1) / total_time
