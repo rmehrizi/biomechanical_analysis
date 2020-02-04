@@ -5,9 +5,9 @@ import pandas as pd
 #import inverse_kinematics as ik
 import time_distance as td
 import numpy as np
-import matplotlib.pyplot as plt
 import math
 #import inverse_dynamics as id
+import plots 
 
 # reading data
 marker_data=pd.read_csv('marker_data.txt',sep='\t')
@@ -16,7 +16,7 @@ body_mass = 68
 
 # time distance moduale
 events = td.event_detection(fp_data, body_mass)
-events_plot(fp_data, 'all', 100)
+plots.events_plot(fp_data, 'all', 100)
 cad = cadence(events)
 print('Cadence average is {0:.2f} steps per minute'.format(cad, 2))
 ratio = stance_ratio(events)
