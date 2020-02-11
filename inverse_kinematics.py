@@ -79,15 +79,15 @@ def length(seg):
     
     output = []
     output.append((seg['torso_x'] ** 2 + seg['torso_y'] ** 2 + seg['torso_z'] ** 2) ** 0.5)
-    output.append((seg['tigh_l_x'] ** 2 + seg['tigh_l_y'] ** 2 + seg['tigh_l_z'] ** 2) ** 0.5)
+    output.append((seg['thigh_l_x'] ** 2 + seg['thigh_l_y'] ** 2 + seg['thigh_l_z'] ** 2) ** 0.5)
     output.append((seg['shank_l_x'] ** 2 + seg['shank_l_y'] ** 2 + seg['shank_l_z'] ** 2) ** 0.5)
     output.append((seg['foot_l_x'] ** 2 + seg['foot_l_y'] ** 2 + seg['foot_l_z'] ** 2) ** 0.5)
-    output.append((seg['tigh_r_x'] ** 2 + seg['tigh_r_y'] ** 2 + seg['tigh_r_z'] ** 2) ** 0.5)
+    output.append((seg['thigh_r_x'] ** 2 + seg['thigh_r_y'] ** 2 + seg['thigh_r_z'] ** 2) ** 0.5)
     output.append((seg['shank_r_x'] ** 2 + seg['shank_r_y'] ** 2 + seg['shank_r_z'] ** 2) ** 0.5)
     output.append((seg['foot_r_x'] ** 2 + seg['foot_r_y'] ** 2 + seg['foot_r_z'] ** 2) ** 0.5)
 
     output = [list(i) for i in zip(*output)]
-    return pd.DataFrame(output, columns=['torso', 'tigh_l', 'shank_l', 'foot_l', 'tigh_r', 'shank_r', 'foot_r'])
+    return pd.DataFrame(output, columns=['torso', 'thigh_l', 'shank_l', 'foot_l', 'thigh_r', 'shank_r', 'foot_r'])
 
 def angles(seg):
     
@@ -118,18 +118,18 @@ def angles(seg):
      """
     
     output = []
-    output.append(np.arccos((seg['torso_y'] * seg['tigh_l_y'] + seg['torso_z'] * seg['tigh_l_z']) /
+    output.append(np.arccos((seg['torso_y'] * seg['thigh_l_y'] + seg['torso_z'] * seg['thigh_l_z']) /
                  ((seg['torso_y'] ** 2 + seg['torso_z'] ** 2)**0.5 *
-                 (seg['tigh_l_y'] ** 2 + seg['tigh_l_z'] ** 2 ) ** 0.5)) *
-                 (180 / np.pi) * (-np.sign(seg['tigh_l_z'])).to_list())
+                 (seg['thigh_l_y'] ** 2 + seg['thigh_l_z'] ** 2 ) ** 0.5)) *
+                 (180 / np.pi) * (-np.sign(seg['thigh_l_z'])).to_list())
 
-    output.append(np.arccos((seg['torso_y'] * seg['tigh_l_y'] + seg['torso_x'] * seg['tigh_l_x']) /
+    output.append(np.arccos((seg['torso_y'] * seg['thigh_l_y'] + seg['torso_x'] * seg['thigh_l_x']) /
                  ((seg['torso_y'] ** 2 + seg['torso_x'] ** 2) ** 0.5 *
-                 (seg['tigh_l_y'] ** 2 + seg['tigh_l_x'] ** 2) ** 0.5)) *
-                 (180 / np.pi) * (np.sign(seg['tigh_l_x'])).to_list())
+                 (seg['thigh_l_y'] ** 2 + seg['thigh_l_x'] ** 2) ** 0.5)) *
+                 (180 / np.pi) * (np.sign(seg['thigh_l_x'])).to_list())
 
-    output.append(np.arccos((seg['tigh_l_y'] * seg['shank_l_y'] + seg['tigh_l_z'] * seg['shank_l_z']) /
-                 ((seg['tigh_l_y'] ** 2 + seg['tigh_l_z'] ** 2)**0.5 *
+    output.append(np.arccos((seg['thigh_l_y'] * seg['shank_l_y'] + seg['thigh_l_z'] * seg['shank_l_z']) /
+                 ((seg['thigh_l_y'] ** 2 + seg['thigh_l_z'] ** 2)**0.5 *
                  (seg['shank_l_y'] ** 2 + seg['shank_l_z'] ** 2 ) ** 0.5)) * \
                  (180 / np.pi) * (np.sign(seg['shank_l_z'])).to_list())
 
@@ -138,18 +138,18 @@ def angles(seg):
                  (seg['foot_l_y'] ** 2 + seg['foot_l_z'] ** 2) ** 0.5)) - np.pi/2) * \
                  (180 / np.pi) * (np.sign(seg['foot_l_y'])).to_list())
 
-    output.append(np.arccos((seg['torso_y'] * seg['tigh_r_y'] + seg['torso_z'] * seg['tigh_r_z']) /
+    output.append(np.arccos((seg['torso_y'] * seg['thigh_r_y'] + seg['torso_z'] * seg['thigh_r_z']) /
                  ((seg['torso_y']**2 + seg['torso_z']**2)**0.5 *
-                 (seg['tigh_r_y']**2 + seg['tigh_r_z']**2)**0.5)) * \
-                 (180 / np.pi) * (-np.sign(seg['tigh_r_z'])).to_list())
+                 (seg['thigh_r_y']**2 + seg['thigh_r_z']**2)**0.5)) * \
+                 (180 / np.pi) * (-np.sign(seg['thigh_r_z'])).to_list())
 
-    output.append(np.arccos((seg['torso_y'] * seg['tigh_r_y'] + seg['torso_x'] * seg['tigh_r_x']) /
+    output.append(np.arccos((seg['torso_y'] * seg['thigh_r_y'] + seg['torso_x'] * seg['thigh_r_x']) /
                  ((seg['torso_y'] ** 2 + seg['torso_x'] ** 2) ** 0.5 *
-                 (seg['tigh_r_y'] ** 2 + seg['tigh_r_x'] ** 2) ** 0.5)) *
-                 (180 / np.pi) * (-np.sign(seg['tigh_r_x'])).to_list())
+                 (seg['thigh_r_y'] ** 2 + seg['thigh_r_x'] ** 2) ** 0.5)) *
+                 (180 / np.pi) * (-np.sign(seg['thigh_r_x'])).to_list())
 
-    output.append(np.arccos((seg['tigh_r_y'] * seg['shank_r_y'] + seg['tigh_r_z'] * seg['shank_r_z']) /
-                 ((seg['tigh_r_y'] ** 2 + seg['tigh_r_z'] ** 2)**0.5 *
+    output.append(np.arccos((seg['thigh_r_y'] * seg['shank_r_y'] + seg['thigh_r_z'] * seg['shank_r_z']) /
+                 ((seg['thigh_r_y'] ** 2 + seg['thigh_r_z'] ** 2)**0.5 *
                  (seg['shank_r_y'] ** 2 + seg['shank_r_z'] ** 2 ) ** 0.5)) * \
                  (180 / np.pi) * (np.sign(seg['shank_r_z'])).to_list())
 
