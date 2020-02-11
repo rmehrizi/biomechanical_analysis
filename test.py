@@ -2,11 +2,11 @@
 # Feb 2020
 
 import pandas as pd
-#import inverse_kinematics as ik
+import inverse_kinematics as ik
 import time_distance as td
 import numpy as np
 import math
-#import inverse_dynamics as id
+import inverse_dynamics as id
 import plots 
 
 # reading data
@@ -21,3 +21,9 @@ cad = cadence(events)
 print('Cadence average is {0:.2f} steps per minute'.format(cad, 2))
 ratio = stance_ratio(events)
 print('Swing phase consists {0:0.2f} and {1:.2f} percent of gait cycle for left and right leg, respectively'.format(ratio[0], ratio[1]))
+
+# inverse kinematics moduale
+segs = ik.segments(marker_data)
+l = ik.length(segs)
+angs = ik.angles(segs)
+plots.angles_plot(angs)
