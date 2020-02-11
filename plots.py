@@ -51,3 +51,21 @@ def angles_plot(angles, n = 200, smooth=True):
         plt.title(col)
         if i==0 or i==4:
             plt.ylabel('angel (degree)')
+
+def forces_plot(forces, body_mass, n = 200, smooth=True):
+    
+    # Plotting joint forces
+    forces = forces/(body_mass) # normalizing the force w.r.t. body mass
+    if smooth:
+        forces = forces.rolling(window=50).mean()
+    plt.figure(figsize=(15,5))
+    j = 1
+    for i in range(0,forces.shape[1],3):
+        ax = plt.subplot(2,3,j)
+        plt.plot(forces.iloc[:n,i], label=forces.columns[i])  
+        plt.plot(forces.iloc[:n,i+1], label=forces.columns[i+1])  
+        plt.plot(forces.iloc[:n,i+2], label=forces.columns[i+2])  
+        plt.legend()
+        if j==1 or j==4:
+            plt.ylabel('force (N/kg)')
+        j += 1
