@@ -27,3 +27,10 @@ segs = ik.segments(marker_data)
 l = ik.length(segs)
 angs = ik.angles(segs)
 plots.angles_plot(angs)
+
+# inverse dynamics moduale
+m = id.mass(body_mass, 1)
+com = id.center_of_mass(marker_data, 1)
+cm_dd = id.derivative(com, 0.01, 2)
+f = id.force(fp_data, m, cm_dd)
+plots.forces_plot(f)
