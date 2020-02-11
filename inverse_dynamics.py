@@ -105,7 +105,7 @@ def center_of_mass(marker_data, gender):
                                          'shank_r_x', 'shank_r_y', 'shank_r_z',
                                          'foot_r_x', 'foot_r_y', 'foot_r_z'])
 
-def derivative(df, delta, order = 2):
+def derivative(df, delta = 0.01, order = 2):
     
      """Returns 1st and 2nd derivatives of a dataframe
      
