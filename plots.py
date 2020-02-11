@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 
 def events_plot(fp_data, event, n = 200):
+    
+    # Plotting gait events
     plt.figure(figsize=(12,5))
     plt.plot(fp_data.loc[:n,['for_l_y']], label='Left Leg')
     plt.plot(fp_data.loc[:n,['for_r_y']], label='Right Left')
@@ -35,3 +37,17 @@ def events_plot(fp_data, event, n = 200):
             i += 1
             
     plt.title('Gait events shown on vertical ground reaction force data')
+    
+def angles_plot(angles, n = 200, smooth=True):
+    
+    # Plotting joint angels
+    if smooth:
+        angles = angles.rolling(window=50).mean()
+        
+    plt.figure(figsize=(15,8))
+    for i, col in enumerate(angles.columns):
+        ax = plt.subplot(2,4,i+1)
+        plt.plot(angles.loc[:n,col], label=col)  
+        plt.title(col)
+        if i==0 or i==4:
+            plt.ylabel('angel (degree)')
