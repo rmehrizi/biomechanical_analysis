@@ -69,3 +69,21 @@ def forces_plot(forces, body_mass, n = 200, smooth=True):
         if j==1 or j==4:
             plt.ylabel('force (N/kg)')
         j += 1
+        
+def moment_plot(moments, body_mass, height, n = 200, smooth=True):
+    
+    # Plotting joint moments
+    moments = moments/(body_mass)*(height) # normalizing the moment w.r.t. body mass and height
+    if smooth:
+        moments = moments.rolling(window=50).mean()
+    plt.figure(figsize=(15,5))
+    j = 1
+    for i in range(0,moments.shape[1],3):
+        ax = plt.subplot(2,3,j)
+        plt.plot(moments.iloc[:n,i], label=moments.columns[i])  
+        plt.plot(moments.iloc[:n,i+1], label=moments.columns[i+1])  
+        plt.plot(moments.iloc[:n,i+2], label=moments.columns[i+2])  
+        plt.legend()
+        if j==1 or j==4:
+            plt.ylabel('moment (Nm/(kg*m)')
+        j += 1
