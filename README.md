@@ -13,6 +13,7 @@ This is a collection of modules that are helpful for biomechanical analysis. The
 Python 3.7 <br />
 NumPy <br />
 Pandas 
+Matplotlib
 
 ## Data
 In order to be able to test the package, sample gait data is provided in ```/data```. It contains the 3D coordinates of markers and ground reaction force obtained from two force plates. <br />
