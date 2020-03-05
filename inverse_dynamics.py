@@ -1,29 +1,32 @@
 # Rahil Mehrizi
 # Jan 2020
-# A moduale for performing inverse kinetics on marker and force plate data
+# A module for performing inverse kinetics on marker and force plate data
 
 import pandas as pd
 
+
 def mass(body_mass, gender):
     
-     """Returns segment mass as fraction of total body mass
+    """Returns segment's mass as a fraction of total body mass
+
+    Methods
+    ==========
+    De Leva, Paolo. "ADJUSTMENTS TO ZATSIORSKY-SELUYANOV" S SEGMENT IN ERTIA PARAMETERS."
+    J biomech 29.9 (1996): 1223-1230.
      
-     Methods
-     ==========
-     
-     Parameters
-     ==========
-     body_mass : float
+    Parameters
+    ==========
+    body_mass : float
         total body mass in kg
-     gender: bool
+    gender: bool
         0 : male
         1 : female
             
-     Returns
-     =======
+    Returns
+    =======
         A dictionary with mass of each body segment in kg
     """
-        
+
     if gender == 0:
         c1 = 14.16
         c2 = 4.33
@@ -42,23 +45,26 @@ def mass(body_mass, gender):
     return dict({'thigh_l': thigh_l_mass, 'shank_l': shank_l_mass, 'foot_l': foot_l_mass,
                  'thigh_r': thigh_r_mass, 'shank_r': shank_r_mass, 'foot_r': foot_r_mass})
 
+
 def center_of_mass(marker_data, gender):
     
-    """Returns segment center of mass coordinates based on the fraction of length 
+    """Returns segment's center of mass coordinates based on the fraction of length
      
-     Methods
-     ==========
+    Methods
+    ==========
+    De Leva, Paolo. "ADJUSTMENTS TO ZATSIORSKY-SELUYANOV" S SEGMENT IN ERTIA PARAMETERS."
+    J biomech 29.9 (1996): 1223-1230.
      
-     Parameters
-     ==========
-     marker_data : dataframe
+    Parameters
+    ==========
+    marker_data : dataframe
         A dataframe with 27 columns including 3d coordinates of 9 joints
-     gender: bool
+    gender: bool
         0 : male
         1 : female
             
-     Returns
-     =======
+    Returns
+    =======
         A dataframe with 18 columns including 3d coordinates of 6 body segment center of mass
     """ 
     
@@ -72,7 +78,6 @@ def center_of_mass(marker_data, gender):
         c3 = 29.9
 
     output = []
-
     output.append(marker_data['hip_l_x'] - c1 * 0.01 * (marker_data['hip_l_x'] - marker_data['knee_l_x']))
     output.append(marker_data['hip_l_y'] - c1 * 0.01 * (marker_data['hip_l_y'] - marker_data['knee_l_y']))
     output.append(marker_data['hip_l_z'] - c1 * 0.01 * (marker_data['hip_l_z'] - marker_data['knee_l_z']))
@@ -105,9 +110,10 @@ def center_of_mass(marker_data, gender):
                                          'shank_r_x', 'shank_r_y', 'shank_r_z',
                                          'foot_r_x', 'foot_r_y', 'foot_r_z'])
 
-def derivative(df, delta = 0.01, order = 2):
+
+def derivative(df, delta=0.01, order=2):
     
-     """Returns 1st and 2nd derivatives of a dataframe
+    """Returns 1st and 2nd derivatives of a dataframe
      
      Methods
      ==========
@@ -126,8 +132,8 @@ def derivative(df, delta = 0.01, order = 2):
             
      Returns
      =======
-        A dataframe whoes values are equal to the derivative of the input dataframe
-    """ 
+        A dataframe with values equal to the derivative of the input dataframe
+    """
 
     if order == 1:
         deriv = (df - df.diff()) / delta
@@ -136,26 +142,29 @@ def derivative(df, delta = 0.01, order = 2):
 
     return deriv
 
+
 def force(fp, mass, cm_dd):
     
-     """Returns force at each joint in N
+    """Returns force at each joint in N
      
-     Methods
-     ==========
-     Newton-Euler equations ()
+    Methods
+    ==========
+    Newton-Euler equations
+    (Hof, At L. "An explicit expression for the moment in multibody systems."
+    Journal of biomechanics 25.10 (1992): 1209-1211.)
      
-     Parameters
-     ==========
-     fp: dataframe
+    Parameters
+    ==========
+    fp: dataframe
         A dataframe with 6 columns including 3d components of the force applied to the left and right force plates in N
-     mass: float
+    mass: float
         total body mass in kg
-     cm_dd: dataframe
+    cm_dd: dataframe
         second derivative of each segment center of mass (output of derivative function)
               
-     Returns
-     =======
-     A dataframe with 18 columns:
+    Returns
+    =======
+    A dataframe with 18 columns:
         ankle_l_x : x component of force applied on the left ankle
         ankle_l_y : y component of force applied on the left ankle
         ankle_l_z : z component of force applied on the left ankle
@@ -175,12 +184,12 @@ def force(fp, mass, cm_dd):
         hip_r_y : y component of force applied on the right hip
         hip_r_z : z component of force applied on the right hip
 
-    """ 
+    """
         
     g_x, g_y, g_z = [0, -9.81, 0]
     cm_dd = cm_dd.dropna()
-    output = []
 
+    output = []
     output.append(- fp['for_l_x'] - mass['foot_l'] * g_x + mass['foot_l'] * cm_dd['foot_l_x'])
     output.append(- fp['for_l_y'] - mass['foot_l'] * g_y + mass['foot_l'] * cm_dd['foot_l_y'])
     output.append(- fp['for_l_z'] - mass['foot_l'] * g_z + mass['foot_l'] * cm_dd['foot_l_z'])
@@ -213,33 +222,36 @@ def force(fp, mass, cm_dd):
                                          'knee_r_x', 'knee_r_y', 'knee_r_z',
                                          'hip_r_x', 'hip_r_y', 'hip_r_z'])
 
+
 def moment(fp, marker, mass, cm, cm_dd, force):
     
-     """Returns moment at each joint in Nm
+    """Returns moment at each joint in Nm
      
-     Methods
-     ==========
-     Newton-Euler equations ()
+    Methods
+    ==========
+    Newton-Euler equations
+    (Hof, At L. "An explicit expression for the moment in multibody systems."
+    Journal of biomechanics 25.10 (1992): 1209-1211.)
      
-     Parameters
-     ==========
-     fp: dataframe
-        A dataframe with 18 columns including 3d coordinates of center of pressure and 3d components of the force and moment
-        applied to the left and right force plates in N
-     marker_data : dataframe
+    Parameters
+    ==========
+    fp: dataframe
+        A dataframe with 18 columns including 3d coordinates of center of pressure and 3d components of the force and
+        moment applied to the left and right force plates in N
+    marker_data : dataframe
         A dataframe with 27 columns including 3d coordinates of 9 joint    
-     mass: float
+    mass: float
         total body mass in kg
-     cm: dataframe
+    cm: dataframe
         A dataframe with 18 columns including 3d coordinates of 6 body segment center of mass (output of center_of_mass function)
-     cm_dd: dataframe
+    cm_dd: dataframe
         second derivative of each segment center of mass (output of derivative function)
-     force: dataframe
+    force: dataframe
         A dataframe with 18 columns including 3d components of force at each joint  (output of force function)
               
-     Returns
-     =======
-     A dataframe with 18 columns:
+    Returns
+    =======
+    A dataframe with 18 columns:
         ankle_l_x : x component of moment applied on the left ankle
         ankle_l_y : y component of moment applied on the left ankle
         ankle_l_z : z component of moment applied on the left ankle
@@ -259,12 +271,12 @@ def moment(fp, marker, mass, cm, cm_dd, force):
         hip_r_y : y component of moment applied on the right hip
         hip_r_z : z component of moment applied on the right hip
 
-    """ 
+    """
         
     g_x, g_y, g_z = [0, -9.81, 0]
     cm_dd = cm_dd.dropna()
-    output = []
 
+    output = []
     output.append(- fp['mom_l_x'] - (fp['cop_l_y'] - marker['ankle_l_y']) * fp['for_l_z'] - \
                  (fp['cop_l_z'] - marker['ankle_l_z']) * fp['for_l_y'] - \
                  (cm['foot_l_y'] - marker['ankle_l_y']) * mass['foot_l'] * g_z -\
@@ -425,7 +437,7 @@ def moment(fp, marker, mass, cm, cm_dd, force):
 
 
 #to_do (power)
-#to_do plot
+
 
 
 
