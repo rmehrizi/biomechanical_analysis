@@ -1,33 +1,35 @@
 # Rahil Mehrizi
 # Jan 2020
-# A moduale for performing inverse kinematics on marker data
+# A module for performing inverse kinematics on marker data
 
 import pandas as pd
 import numpy as np
+
 
 def segments(marker_data):
     
     """Returns the 3d orientation of each body segment
      
-     Methods
-     ==========
-     Each body segment is a 3d vector, which is defined by calculating the difference between proximal and distal marker coordinates.
-     torso(x,y,z) = neck(x,y,z) - hip_center(x,y,z)
-     thigh_l(x,y,z) = hip_l(x,y,z) - knee_l(x,y,z)
-     shank_l(x,y,z) = knee_l(x,y,z) - ankle_l(x,y,z)
-     foot_l(x,y,z) = ankle_l(x,y,z) - toe_l(x,y,z)
-     thigh_r(x,y,z) = hip_r(x,y,z) - knee_r(x,y,z)
-     shank_r(x,y,z) = knee_r(x,y,z) - ankle_r(x,y,z)
-     foot_r(x,y,z) = ankle_r(x,y,z) - toe_r(x,y,z)
+    Methods
+    ==========
+    Each body segment is a 3d vector, which is defined by calculating the difference between proximal and distal marker
+    coordinates.
+    torso(x,y,z) = neck(x,y,z) - hip_center(x,y,z)
+    thigh_l(x,y,z) = hip_l(x,y,z) - knee_l(x,y,z)
+    shank_l(x,y,z) = knee_l(x,y,z) - ankle_l(x,y,z)
+    foot_l(x,y,z) = ankle_l(x,y,z) - toe_l(x,y,z)
+    thigh_r(x,y,z) = hip_r(x,y,z) - knee_r(x,y,z)
+    shank_r(x,y,z) = knee_r(x,y,z) - ankle_r(x,y,z)
+    foot_r(x,y,z) = ankle_r(x,y,z) - toe_r(x,y,z)
      
-     Parameters
-     ==========
+    Parameters
+    ==========
         marker_data : dataframe
             A dataframe with 27 columns including 3d coordinates of 9 joints
             
-     Returns
-     =======
-        A dataframe with 18 columns including 3d orientations of 6 body segments      
+    Returns
+    =======
+        A dataframe with 18 columns including 3d orientations of 6 body segments
     """
     
     output = []
@@ -59,22 +61,23 @@ def segments(marker_data):
                                          'thigh_r_x', 'thigh_r_y', 'thigh_r_z', 'shank_r_x', 'shank_r_y', 'shank_r_z',
                                          'foot_r_x', 'foot_r_y', 'foot_r_z'])
 
+
 def length(seg):
     
     """Returns the length of each body segment
      
-     Methods
-     ==========
-     The segment length is defined as the Euclidean distance between the proximal and distal joints.
+    Methods
+    ==========
+    The segment length is defined as the Euclidean distance between the proximal and distal joints.
      
-     Parameters
-     ==========
-     seg : dataframe
+    Parameters
+    ==========
+    seg : dataframe
         A dataframe with 18 columns including 3d orientations of 6 body segments (output of "segment" function)
                  
-     Returns
-     =======
-        the length of each body segment in the same unit of marker data     
+    Returns
+    =======
+        the length of each body segment in the same unit of marker data
     """
     
     output = []
@@ -89,23 +92,24 @@ def length(seg):
     output = [list(i) for i in zip(*output)]
     return pd.DataFrame(output, columns=['torso', 'thigh_l', 'shank_l', 'foot_l', 'thigh_r', 'shank_r', 'foot_r'])
 
+
 def angles(seg):
     
-    """Returns the joints angle
+    """Returns joint angles
      
-     Methods
-     ==========
-     The joint angle is calculated using the dot product and magnitude of the segment oriantations that intersect at that joint
-     sign convention for angles: hip flexion, hip abduction, knee flexion, ankle plantarflexion are positive.
+    Methods
+    ==========
+    The joint angle is calculated using the dot product and magnitude of the segment orientation that intersect at that
+    joint sign convention for angles: hip flexion, hip abduction, knee flexion, ankle plantarflexion are positive.
      
-     Parameters
-     ==========
-     seg : dataframe
+    Parameters
+    ==========
+    seg : dataframe
         A dataframe with 18 columns including 3d orientations of 6 body segments (output of "segment" function)
                  
-     Returns
-     =======
-     A dataframe with 8 columns:
+    Returns
+    =======
+    A dataframe with 8 columns:
         hip_l_flex_ext : left hip flexion/extension in degree
         hip_l_abd_add : left hip abduction/adduction in degree
         knee_l_flex_ext : left knee flexion/extension in degree
@@ -115,7 +119,7 @@ def angles(seg):
         knee_r_flex_ext : right knee flexion/extension in degree
         ankle_r_dors_plan : right ankle plantar-flexion/Dorsiflexion in degree
    
-     """
+    """
     
     output = []
     output.append(np.arccos((seg['torso_y'] * seg['thigh_l_y'] + seg['torso_z'] * seg['thigh_l_z']) /
