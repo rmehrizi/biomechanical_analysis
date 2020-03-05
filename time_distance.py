@@ -1,26 +1,27 @@
 # Rahil Mehrizi
 # Jan 2020
-# A moduale for calculating gait events and time-distance features
+# A module for calculating gait events and time-distance features
 
 import pandas as pd
 
+
 def event_detection(fp_data, body_mass, constant = 0.05):
     
-     """Returns the times at which heel strikes and toe offs happen based on the forca plate data.
+    """Returns the times at which heel strikes and toe offs happen based on the forca plate data.
      
-     Methods
-     ==========
-     A treshhold is being defined as a percentage of total body weight (constant * body_mass * 9.81) and heel strike 
-     happens when the vertical ground reaction force goes above a treshhold after being below the treshhold. Toe off 
-     happens when the vertical ground reaction force goes below a treshhold after being above the treshhold.   
+    Methods
+    ==========
+    A threshold is being defined as a percentage of total body weight (constant * body_mass * 9.81) and heel strike
+    happens when the vertical ground reaction force goes above a threshold after being below the threshold. Toe off
+    happens when the vertical ground reaction force goes below a threshold after being above the threshold.
      
-     Parameters
-     ==========
-     fp_data : dataframe
+    Parameters
+    ==========
+    fp_data : dataframe
         A dataframe with two columns including left and right vertical ground reaction force in N
-     body_mass : float
+    body_mass : float
         body mass in kg
-     constant : float
+    constant : float
         predifed percentage to detect heel strike and toe off   
             
     Returns
@@ -41,11 +42,11 @@ def event_detection(fp_data, body_mass, constant = 0.05):
     heel_strike_l = []
     toe_off_l = []
     while i < len(fp_data) - 1:
-        if fp_data.loc[i,'for_l_y'] >= constant * body_mass * 9.81:
+        if fp_data.loc[i, 'for_l_y'] >= constant * body_mass * 9.81:
             i += 1
         else:
             toe_off_l.append(i)
-            while (fp_data.loc[i,'for_l_y'] < constant * body_mass * 9.81) and (i < len(fp_data) - 1):
+            while (fp_data.loc[i, 'for_l_y'] < constant * body_mass * 9.81) and (i < len(fp_data) - 1):
                 i += 1
             heel_strike_l.append(i)
             
@@ -54,36 +55,38 @@ def event_detection(fp_data, body_mass, constant = 0.05):
     heel_strike_r = []
     toe_off_r = []
     while i < len(fp_data) - 1:
-        if fp_data.loc[i,'for_r_y'] >= constant * body_mass * 9.81:
+        if fp_data.loc[i, 'for_r_y'] >= constant * body_mass * 9.81:
             i += 1
         else:
             toe_off_r.append(i)
-            while (fp_data.loc[i,'for_r_y'] < constant * body_mass * 9.81) and (i < len(fp_data) - 1):
+            while (fp_data.loc[i, 'for_r_y'] < constant * body_mass * 9.81) and (i < len(fp_data) - 1):
                 i += 1
             heel_strike_r.append(i)
 
     output = [heel_strike_l, toe_off_l, heel_strike_r, toe_off_r]
     output = [list(i) for i in zip(*output)]
-    return pd.DataFrame(output,columns=['HSL','TOL','HSR','TOR'])
+    return pd.DataFrame(output, columns=['HSL', 'TOL', 'HSR', 'TOR'])
 
-def cadence(events, delta = 0.01):
+
+def cadence(events, delta=0.01):
     
     """Returns number of steps per minute
     
-     Methods
-     ==========
-     cadence = (# right heel strike + # left heel strike - 1) / (time of the last heel strike - time of the first heel strike)
+    Methods
+    ==========
+    cadence = (# right heel strike + # left heel strike - 1) /
+              (time of the last heel strike - time of the first heel strike)
      
-     Parameters
-     ==========
-     events : dataframe
+    Parameters
+    ==========
+    events : dataframe
         A dataframe with two columns indicating the indices of left and right heel strikes
-     delta : float
+    delta : float
         force plate data rate (1/s)  
             
-     Returns
-     =======
-     average of cadence (steps per minute) on the whole gate cycles      
+    Returns
+    =======
+    average of cadence (steps per minute) on the whole gate cycles
     """
     start = events.iloc[0].min()
     finish = events.iloc[-1].max()
@@ -91,9 +94,10 @@ def cadence(events, delta = 0.01):
     
     return (events.HSL.count() + events.HSR.count() - 1) / total_time
 
+
 def stance_ratio(events):
     
-     """Returns the ratio of stance to the gait cycle. In normal gait, it should be around 0.6.
+    """Returns the ratio of stance to the gait cycle. In normal gait, it should be around 0.6.
         
      Methods
      ==========
@@ -106,7 +110,7 @@ def stance_ratio(events):
             
      Returns
      =======
-     average of stance_ratio on the whole gate cycles for left and right leg seperately.     
+     average of stance_ratio on the whole gate cycles for left and right leg separately.
     """
     
     # start from the first heel strike (left leg)
